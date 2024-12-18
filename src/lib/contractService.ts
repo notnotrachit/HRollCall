@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ethers } from 'ethers';
-import ClassFactory from '../../artifacts/contracts/ClassFactory.sol/ClassFactory.json';
-import ClassContract from '../../artifacts/contracts/ClassContract.sol/ClassContract.json';
+import ClassFactory from './contracts/ClassFactory.sol/ClassFactory.json';
+import ClassContract from './contracts/ClassContract.sol/ClassContract.json';
 
 const CONTRACT_ADDRESS = '0x2Cdc7251364d4C0e0e7D83037bE31d095A3c8497';
 
