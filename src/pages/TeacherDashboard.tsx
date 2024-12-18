@@ -39,6 +39,7 @@ export function TeacherDashboard() {
     name: string;
   }
   
+  
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
   const { provider } = useWalletContext();
 
@@ -134,6 +135,30 @@ export function TeacherDashboard() {
     fetchAttendanceRecords(lectureId, classAddress);
 
   };
+
+  const downloadAttendanceData = () => {
+    if (attendanceRecords.length === 0) {
+      alert("No attendance records available to download.");
+      return;
+    }
+
+    const csvRows = [
+      ["Address", "Name"], // CSV header
+      ...attendanceRecords.map((record) => [record.address, record.name]), // Attendance data
+    ]
+      .map((row) => row.join(","))
+      .join("\n");
+  
+    // Create a Blob and trigger a download
+    const blob = new Blob([csvRows], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "attendance_records.csv";
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
+  
 
   return (
     <div className="container mx-auto p-6 bg-gradient-to-br from-blue-100 to-indigo-200 min-h-screen">
@@ -310,6 +335,20 @@ export function TeacherDashboard() {
             </Card>
           </motion.div>
         ))}
+         <motion.div
+      className="mb-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+    >
+      <Button
+        onClick={downloadAttendanceData}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+      >
+        Download Attendance Data
+      </Button>
+    </motion.div>
+
       </motion.div>
     </div>
   );
