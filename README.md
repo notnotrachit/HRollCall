@@ -1,69 +1,85 @@
-# Welcome to your Lovable project
+# HRollCall - Blockchain-Powered Attendance System
 
-## Project info
+HRollCall is a decentralized attendance management system that leverages blockchain technology to provide secure, transparent, and efficient attendance tracking for educational institutions and organizations.
 
-**URL**: https://lovable.dev/projects/16baab6a-4e43-4ec4-a8c4-03cb2c59070b
+## Features
 
-## How can I edit this code?
+- **Decentralized Verification**: Secure attendance records using blockchain technology
+- **QR Code Integration**: Easy attendance marking through QR code scanning
+- **Role-Based Access**: Separate interfaces for teachers and students
+- **Real-Time Updates**: Instant attendance tracking and verification
+- **Tamper-Proof Records**: Immutable attendance data stored on the blockchain
+- **Analytics Dashboard**: Comprehensive attendance statistics and reporting
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend Framework**: React with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **Animations**: Framer Motion
+- **Decentralised Ledger**: Hedera 
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/16baab6a-4e43-4ec4-a8c4-03cb2c59070b) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js (v16 or higher)
+- npm or yarn
+- MetaMask wallet
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+1. Clone the repository
+```bash
+git clone https://github.com/notnotrachit/hrollcall.git
+cd hrollcall
 ```
 
-**Edit a file directly in GitHub**
+2. Install dependencies
+```bash
+npm install
+# or
+pnpm install
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. Start the development server
+```bash
+npm run dev
+# or
+pnpm run dev
+```
 
-**Use GitHub Codespaces**
+4. Open your browser and visit `http://localhost:8080`
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Connecting to Hedera
 
-## What technologies are used for this project?
+1. Install MetaMask browser extension
+2. Add Hedera Testnet
+3. Connect your wallet to the application
+4. Select your role (Teacher/Student)
 
-This project is built with .
+## Usage
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### For Teachers
 
-## How can I deploy this project?
+- Create new classes
+- Generate attendance QR codes
+- View attendance records
+- Download attendance reports
+- Manage student enrollments
 
-Simply open [Lovable](https://lovable.dev/projects/16baab6a-4e43-4ec4-a8c4-03cb2c59070b) and click on Share -> Publish.
+### For Students
 
-## I want to use a custom domain - is that possible?
+- Scan QR codes to mark attendance
+- Check enrolled classes
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## Project Structure
+
+```
+src/
+├── components/         # Reusable UI components
+├── context/           # React context providers
+├── lib/              # Utility functions and blockchain services
+├── pages/            # Main application pages
+└── styles/           # Global styles and Tailwind config
+```

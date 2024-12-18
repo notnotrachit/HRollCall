@@ -26,8 +26,8 @@ export function DashboardRouter() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h1 className="text-5xl font-bold mb-6">Welcome to ClassLedger</h1>
-            <p className="text-xl mb-8">Revolutionizing attendance tracking with blockchain technology</p>
+            <h1 className="text-5xl font-bold mb-6">Welcome to HRollCall</h1>
+            <p className="text-xl mb-8">Smart attendance tracking powered by blockchain</p>
             <Button 
               onClick={connectWallet}
               className="bg-white text-indigo-600 hover:bg-indigo-100 transition-colors duration-300 text-lg py-2 px-6 rounded-full shadow-lg hover:shadow-xl"
@@ -43,8 +43,11 @@ export function DashboardRouter() {
               variants={fadeIn}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-            <img src="https://akriviahcm.com/blog/wp-content/uploads/2024/03/Features-of-time-and-attendance-system.jpg" alt="Digital Classroom" className="rounded-lg shadow-2xl" />
-
+              <img 
+                src="https://akriviahcm.com/blog/wp-content/uploads/2024/03/Features-of-time-and-attendance-system.jpg" 
+                alt="Digital Attendance" 
+                className="rounded-lg shadow-2xl" 
+              />
             </motion.div>
             <motion.div
               initial="hidden"
@@ -52,23 +55,23 @@ export function DashboardRouter() {
               variants={fadeIn}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <h2 className="text-3xl font-bold mb-6">What We Do</h2>
+              <h2 className="text-3xl font-bold mb-6">Features</h2>
               <ul className="space-y-4">
                 <li className="flex items-center">
                   <CheckCircle className="mr-2 text-green-400" />
-                  Secure and transparent attendance tracking
+                  Decentralized attendance verification
                 </li>
                 <li className="flex items-center">
                   <Clock className="mr-2 text-green-400" />
-                  Real-time class management
+                  Quick and efficient roll calls
                 </li>
                 <li className="flex items-center">
                   <Shield className="mr-2 text-green-400" />
-                  Immutable records on the blockchain
+                  Tamper-proof attendance records
                 </li>
                 <li className="flex items-center">
                   <TrendingUp className="mr-2 text-green-400" />
-                  Analytics for improved educational outcomes
+                  Comprehensive attendance analytics
                 </li>
               </ul>
             </motion.div>
@@ -86,17 +89,17 @@ export function DashboardRouter() {
               <div className="bg-white/10 p-6 rounded-lg backdrop-blur-sm">
                 <BookOpen className="text-4xl mb-4" />
                 <h3 className="text-xl font-semibold mb-2">For Teachers</h3>
-                <p>Easily manage classes, track attendance, and generate reports.</p>
+                <p>Create and manage attendance sessions with ease</p>
               </div>
               <div className="bg-white/10 p-6 rounded-lg backdrop-blur-sm">
                 <GraduationCap className="text-4xl mb-4" />
                 <h3 className="text-xl font-semibold mb-2">For Students</h3>
-                <p>Check in to classes securely and view your attendance records.</p>
+                <p>Mark attendance securely using QR codes</p>
               </div>
               <div className="bg-white/10 p-6 rounded-lg backdrop-blur-sm">
                 <Shield className="text-4xl mb-4" />
                 <h3 className="text-xl font-semibold mb-2">Blockchain Security</h3>
-                <p>All records are securely stored and verified on the blockchain.</p>
+                <p>Immutable and transparent attendance records</p>
               </div>
             </div>
           </motion.div>

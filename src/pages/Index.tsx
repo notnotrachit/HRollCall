@@ -12,7 +12,7 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-4xl font-bold text-indigo-800">Class Ledger</h1>
+          <h1 className="text-4xl font-bold text-indigo-800">HRollCall</h1>
           <WalletConnect />
         </motion.div>
         <motion.div
@@ -22,11 +22,11 @@ const Index = () => {
         >
           <Card className="bg-white/80 backdrop-blur-sm shadow-xl">
             <CardHeader>
-              <CardTitle className="text-2xl text-indigo-700">Welcome to Class Ledger</CardTitle>
+              <CardTitle className="text-2xl text-indigo-700">Welcome to HRollCall</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">
-                Connect your wallet to start managing classes and attendance with blockchain technology.
+                Connect your wallet to start managing attendance with blockchain-powered security and transparency.
               </p>
             </CardContent>
           </Card>
