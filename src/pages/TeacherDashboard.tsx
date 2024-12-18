@@ -33,6 +33,7 @@ export function TeacherDashboard() {
   const [showMintForm, setShowMintForm] = useState(false);
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [qrData, setQrData] = useState<string | null>(null);
+  
   interface AttendanceRecord {
     address: string;
     name: string;
