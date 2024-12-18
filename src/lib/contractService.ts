@@ -2,8 +2,10 @@
 import { ethers } from 'ethers';
 import ClassFactory from './contracts/ClassFactory.sol/ClassFactory.json';
 import ClassContract from './contracts/ClassContract.sol/ClassContract.json';
+import { HederaService } from './hederaService';
 
 const CONTRACT_ADDRESS = '0x2Cdc7251364d4C0e0e7D83037bE31d095A3c8497';
+const hederaService = new HederaService();
 
 export const createClass = async (name: string, symbol: string, provider: ethers.providers.Web3Provider) => {
     const signer = provider.getSigner();
@@ -33,12 +35,63 @@ export const createLecture = async (classAddress: string, topic: string, provide
 };
 
 export const markAttendance = async (classAddress: string, lectureId: any, provider: ethers.providers.Web3Provider) => {
-    const signer = provider.getSigner();
-    console.log('classAddress', classAddress);
-    console.log('lectureId', lectureId);
-    const classContract = new ethers.Contract(classAddress, ClassContract.abi, signer);
-    const tx = await classContract.markAttendance(lectureId);
-    await tx.wait();
+    try {
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        
+        // Handle BigNumber lectureId
+        const validLectureId = lectureId.hex ? 
+            parseInt(lectureId.hex, 16) : // Convert hex to decimal if it's a BigNumber
+            Number(lectureId);            // Otherwise try normal number conversion
+            
+        if (isNaN(validLectureId)) {
+            throw new Error('Invalid lecture ID');
+        }
+
+        // Sign the attendance data
+        const timestamp = Date.now();
+        const message = ethers.utils.solidityKeccak256(
+            ['address', 'uint256', 'uint256'],
+            [address, validLectureId, timestamp]
+        );
+        const signature = await signer.signMessage(ethers.utils.arrayify(message));
+
+        // Submit to blockchain
+        const classContract = new ethers.Contract(classAddress, ClassContract.abi, signer);
+        const tx = await classContract.markAttendance(validLectureId);
+        await tx.wait();
+
+        // Submit to Hedera Consensus Service
+        const attendanceData = {
+            studentAddress: address,
+            lectureId: validLectureId,
+            timestamp,
+            signature
+        };
+
+        // Get or create topic ID for this class
+        let topicId = localStorage.getItem(`topic_${classAddress}`);
+        if (!topicId) {
+            try {
+                topicId = await hederaService.createAttendanceTopic(classAddress);
+                localStorage.setItem(`topic_${classAddress}`, topicId);
+            } catch (error) {
+                console.error('Error creating Hedera topic:', error);
+                // Continue with blockchain attendance even if Hedera fails
+                return;
+            }
+        }
+
+        try {
+            await hederaService.submitAttendance(topicId!, attendanceData);
+        } catch (error) {
+            console.error('Error submitting to Hedera:', error);
+            // Attendance is already marked on blockchain, so we can continue
+        }
+    } catch (error) {
+        console.error('Error marking attendance:', error);
+        throw error;
+    }
 };
 
 export const getAttendanceRecords = async (classAddress: string, lectureId: number, provider: ethers.providers.Web3Provider) => {

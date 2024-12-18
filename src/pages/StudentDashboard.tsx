@@ -42,7 +42,9 @@ export function StudentDashboard() {
   const [isFetchingAttendance, setIsFetchingAttendance] = useState<{
     [key: string]: boolean;
   }>({});
-  const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
+  const [facingMode, setFacingMode] = useState<"environment" | "user">(
+    "environment"
+  );
 
   useEffect(() => {
     const fetchAttendance = async (classAddress: string) => {
@@ -119,7 +121,7 @@ export function StudentDashboard() {
   };
 
   const toggleCamera = () => {
-    setFacingMode(prev => prev === 'environment' ? 'user' : 'environment');
+    setFacingMode((prev) => (prev === "environment" ? "user" : "environment"));
   };
 
   return (
@@ -171,11 +173,11 @@ export function StudentDashboard() {
                         style={{ width: "100%" }}
                         constraints={{
                           video: {
-                            facingMode: facingMode
-                          }
+                            facingMode: facingMode,
+                          },
                         }}
                       />
-                      <Button 
+                      <Button
                         onClick={toggleCamera}
                         className="w-full bg-gray-600 hover:bg-gray-700 transition-colors duration-200"
                       >
