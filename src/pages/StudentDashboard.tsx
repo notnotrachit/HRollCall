@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -191,9 +193,9 @@ export function StudentDashboard() {
                         {classItem.symbol}
                       </Badge>
                       <p className="text-gray-600 mt-2">Class Address: {classItem.classAddress.slice(0, 6)}...{classItem.classAddress.slice(-4)}</p>
-                      <Button className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200">
+                      {/* <Button className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200">
                         Enroll in Class
-                      </Button>
+                      </Button> */}
                     </CardContent>
                   </Card>
                 </motion.div>

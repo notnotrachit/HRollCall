@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,7 +33,12 @@ export function TeacherDashboard() {
   const [showMintForm, setShowMintForm] = useState(false);
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [qrData, setQrData] = useState<string | null>(null);
-  const [attendanceRecords, setAttendanceRecords] = useState<[]>([]);
+  interface AttendanceRecord {
+    address: string;
+    name: string;
+  }
+  
+  const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
   const { provider } = useWalletContext();
 
   useEffect(() => {
@@ -85,7 +91,7 @@ export function TeacherDashboard() {
       console.log('Generating QR code for lecture ID and class address:', qrData);
       const qr = new QRious({
         element: document.getElementById('qr-code'),
-        value: qrData, // Use the new QR data
+        value: qrData, 
         size: 200,
       });
     }
@@ -248,8 +254,8 @@ export function TeacherDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <p className="text-gray-600">Students: {classItem.studentCount}</p>
-                  <p className="text-gray-600">Lectures: {classItem.lectureCount}</p>
+                  {/* <p className="text-gray-600">Students: {classItem.studentCount}</p>
+                  <p className="text-gray-600">Lectures: {classItem.lectureCount}</p> */}
                   <input
                     type="text"
                     placeholder="Lecture Topic"
