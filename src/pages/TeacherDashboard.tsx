@@ -16,6 +16,8 @@ import QRious from "qrious";
 import { motion } from "framer-motion";
 import Popup from "../components/Popup"; // Assuming Popup component is in components folder
 import { HederaService } from "@/lib/hederaService";
+import StudentForm from "../components/StudentForm";
+import CreateClassForm from "../components/CreateClassForm";
 
 interface Class {
   id: string;
@@ -54,13 +56,8 @@ interface PopupContentType {
 
 export function TeacherDashboard() {
   const [classes, setClasses] = useState<Class[]>([]);
-  const [newClassName, setNewClassName] = useState("");
-  const [newClassSymbol, setNewClassSymbol] = useState("");
   const [newLectureTopic, setNewLectureTopic] = useState("");
   const [confirmationMessage, setConfirmationMessage] = useState("");
-  const [studentAddress, setStudentAddress] = useState("");
-  const [studentName, setStudentName] = useState("");
-  const [additionalDetails, setAdditionalDetails] = useState("");
   const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
   const [lecturesByClass, setLecturesByClass] = useState<LecturesByClass>({});
   const [attendanceByLecture, setAttendanceByLecture] =
@@ -69,9 +66,7 @@ export function TeacherDashboard() {
   const [lectureTopicsByClass, setLectureTopicsByClass] =
     useState<LectureTopicsByClass>({});
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [popupContent, setPopupContent] = useState<PopupContentType | null>(
-    null
-  );
+  const [popupContent, setPopupContent] = useState<PopupContentType | null>(null);
   const [isCreatingClass, setIsCreatingClass] = useState(false);
   const [isCreatingLecture, setIsCreatingLecture] = useState<{
     [key: string]: boolean;
@@ -88,6 +83,16 @@ export function TeacherDashboard() {
   const hederaServiceRef = useRef<HederaService>(new HederaService());
 
   const { provider } = useWalletContext();
+
+  // Add form state
+  // const [studentForm, setStudentForm] = useState({
+  //   address: '',
+  //   name: '',
+  //   details: ''
+  // });
+  // const [studentAddress, setStudentAddress] = useState("");
+  // const [studentName, setStudentName] = useState("");
+  // const [additionalDetails, setAdditionalDetails] = useState("");
 
   // Add function to ensure Hedera topics exist for all classes
   const ensureHederaTopics = async (classes: Class[]) => {
@@ -135,47 +140,6 @@ export function TeacherDashboard() {
     fetchInitialData();
   }, [provider]);
 
-  const handleCreateClass = async () => {
-    try {
-      setIsCreatingClass(true);
-      // Create the class contract
-      await createClass(newClassName, newClassSymbol, provider);
-      
-      // Get the updated list of classes to get the new class address
-      const classList = await getClasses(provider);
-      const newClass = classList[classList.length - 1]; // Get the most recently created class
-      const classAddress = newClass[0];
-
-      // Create a Hedera topic for this class
-      const hederaService = hederaServiceRef.current;
-      const topicId = await hederaService.createAttendanceTopic(classAddress);
-      
-      // Store the topic ID in localStorage
-      localStorage.setItem(`topic_${classAddress}`, topicId);
-      console.log(`Created and stored topic ${topicId} for class ${classAddress}`);
-
-      setConfirmationMessage(`Class ${newClassName} created successfully!`);
-      setNewClassName("");
-      setNewClassSymbol("");
-      setIsPopupOpen(false);
-
-      // Update the classes list
-      const formattedClasses = classList.map((classData) => ({
-        classAddress: classData[0],
-        name: classData[1],
-        symbol: classData[2],
-        studentCount: 0,
-        lectureCount: 0,
-      }));
-      setClasses(formattedClasses);
-    } catch (error) {
-      console.error("Error creating class:", error);
-      setConfirmationMessage("Failed to create class. Please try again.");
-    } finally {
-      setIsCreatingClass(false);
-    }
-  };
-
   const handleCreateLecture = async (classAddress: string) => {
     const topic = lectureTopicsByClass[classAddress];
     if (!topic) return;
@@ -211,76 +175,24 @@ export function TeacherDashboard() {
     }
   }, [qrData, isPopupOpen]);
 
-  const handleAddStudent = async () => {
-    try {
-      setIsAddingStudent(true);
-      await mintNFT(selectedClassId, studentAddress, studentName, provider);
-      setConfirmationMessage(`Student ${studentName} added successfully!`);
-      setStudentAddress("");
-      setStudentName("");
-      setAdditionalDetails("");
-      setSelectedClassId(null);
-      setIsPopupOpen(false);
-    } catch (error) {
-      console.error("Error adding student:", error);
-      setConfirmationMessage("Failed to add student. Please try again.");
-    } finally {
-      setIsAddingStudent(false);
-    }
-  };
-
   const openMintForm = (classId: string) => {
-    setSelectedClassId(classId);
-
-    const mintFormContent = (
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Student Wallet Address:
-          </label>
-          <input
-            type="text"
-            value={studentAddress}
-            onChange={(e) => setStudentAddress(e.target.value)}
-            required
-            className="mt-1 block w-full border p-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Student Name:
-          </label>
-          <input
-            type="text"
-            value={studentName}
-            onChange={(e) => setStudentName(e.target.value)}
-            required
-            className="mt-1 block w-full border p-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Additional Details:
-          </label>
-          <input
-            type="text"
-            value={additionalDetails}
-            onChange={(e) => setAdditionalDetails(e.target.value)}
-            className="mt-1 block w-full border p-2 rounded-md"
-          />
-        </div>
-        <Button
-          onClick={handleAddStudent}
-          className="w-full bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
-        >
-          Add Student
-        </Button>
-      </div>
-    );
+    const handleFormSubmit = async (formData: { address: string; name: string; details: string }) => {
+      try {
+        setIsAddingStudent(true);
+        await mintNFT(classId, formData.address, formData.name, provider);
+        setConfirmationMessage(`Student ${formData.name} added successfully!`);
+        setIsPopupOpen(false);
+      } catch (error) {
+        console.error("Error adding student:", error);
+        setConfirmationMessage("Failed to add student. Please try again.");
+      } finally {
+        setIsAddingStudent(false);
+      }
+    };
 
     setPopupContent({
       title: "Add New Student",
-      content: mintFormContent,
+      content: <StudentForm onSubmit={handleFormSubmit} isAddingStudent={isAddingStudent} />,
     });
     setIsPopupOpen(true);
   };
@@ -377,7 +289,14 @@ export function TeacherDashboard() {
       [key]: attendanceRecords,
     }));
 
-    // Create content with direct data
+    // Get real-time attendance for this lecture
+    const realtimeRecords = realTimeAttendance[classAddress]?.filter(
+      (record: any) => record.lectureId === lectureId
+    ) || [];
+
+    console.log('Real-time records for lecture:', realtimeRecords);
+
+    // Create content with both blockchain and real-time data
     const attendanceContent = (
       <div className="space-y-4">
         <div className="mb-4">
@@ -390,29 +309,61 @@ export function TeacherDashboard() {
               Download Records
             </Button>
           </div>
-          {attendanceRecords.length > 0 ? (
-            <ul className="space-y-2">
-              {attendanceRecords.map((student) => (
-                <li
-                  key={student.address}
-                  className="p-2 bg-gray-100 rounded-lg"
-                >
-                  <span className="font-semibold">{student.name}</span>
-                  <br />
-                  <span className="text-sm text-gray-600">
-                    {student.address}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No attendance records found.</p>
-          )}
+          
+          {/* Blockchain Records */}
+          <div className="mb-6">
+            <h4 className="text-md font-semibold mb-2">Confirmed Attendance:</h4>
+            {attendanceRecords.length > 0 ? (
+              <ul className="space-y-2">
+                {attendanceRecords.map((student) => (
+                  <li
+                    key={student.address}
+                    className="p-2 bg-gray-100 rounded-lg"
+                  >
+                    <span className="font-semibold">{student.name}</span>
+                    <br />
+                    <span className="text-sm text-gray-600">
+                      {student.address}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No confirmed attendance records yet.</p>
+            )}
+          </div>
+
+          {/* Real-time Records */}
+          <div>
+            <h4 className="text-md font-semibold mb-2">Recent Attendance (Not Yet Confirmed):</h4>
+            {realtimeRecords.length > 0 ? (
+              <ul className="space-y-2">
+                {realtimeRecords.map((record: any, index: number) => (
+                  <li
+                    key={index}
+                    className="p-2 bg-green-100 rounded-lg animate-pulse"
+                  >
+                    <span className="font-semibold">{record.studentName || 'Unknown'}</span>
+                    <br />
+                    <span className="text-sm text-gray-600">
+                      {record.studentAddress}
+                    </span>
+                    <br />
+                    <span className="text-xs text-gray-500">
+                      Just attended - waiting for confirmation
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No real-time attendance updates yet.</p>
+            )}
+          </div>
         </div>
       </div>
     );
 
-    // Update popup with direct data
+    // Update popup with combined data
     setPopupContent({
       title: "Attendance Records",
       content: attendanceContent,
@@ -450,45 +401,47 @@ export function TeacherDashboard() {
   };
 
   const openCreateClassForm = () => {
-    const createClassContent = (
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Class Name:
-          </label>
-          <input
-            type="text"
-            placeholder="Enter class name"
-            value={newClassName}
-            onChange={(e) => setNewClassName(e.target.value)}
-            className="mt-1 block w-full border p-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Class Symbol:
-          </label>
-          <input
-            type="text"
-            placeholder="Enter class symbol"
-            value={newClassSymbol}
-            onChange={(e) => setNewClassSymbol(e.target.value)}
-            className="mt-1 block w-full border p-2 rounded-md"
-          />
-        </div>
-        <Button
-          onClick={handleCreateClass}
-          disabled={isCreatingClass}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
-        >
-          {isCreatingClass ? "Creating..." : "Create Class"}
-        </Button>
-      </div>
-    );
+    const handleFormSubmit = async (formData: { name: string; symbol: string }) => {
+      try {
+        setIsCreatingClass(true);
+        await createClass(formData.name, formData.symbol, provider);
+        
+        // Get the updated list of classes to get the new class address
+        const classList = await getClasses(provider);
+        const newClass = classList[classList.length - 1];
+        const classAddress = newClass[0];
+
+        // Create a Hedera topic for this class
+        const hederaService = hederaServiceRef.current;
+        const topicId = await hederaService.createAttendanceTopic(classAddress);
+        
+        // Store the topic ID in localStorage
+        localStorage.setItem(`topic_${classAddress}`, topicId);
+        console.log(`Created and stored topic ${topicId} for class ${classAddress}`);
+
+        setConfirmationMessage(`Class ${formData.name} created successfully!`);
+        setIsPopupOpen(false);
+
+        // Update the classes list
+        const formattedClasses = classList.map((classData) => ({
+          classAddress: classData[0],
+          name: classData[1],
+          symbol: classData[2],
+          studentCount: 0,
+          lectureCount: 0,
+        }));
+        setClasses(formattedClasses);
+      } catch (error) {
+        console.error("Error creating class:", error);
+        setConfirmationMessage("Failed to create class. Please try again.");
+      } finally {
+        setIsCreatingClass(false);
+      }
+    };
 
     setPopupContent({
       title: "Create New Class",
-      content: createClassContent,
+      content: <CreateClassForm onSubmit={handleFormSubmit} isCreating={isCreatingClass} />,
     });
     setIsPopupOpen(true);
   };
@@ -510,13 +463,25 @@ export function TeacherDashboard() {
           console.log(`Setting up subscription for class ${classItem.name} with topic ${topicId}`);
           hederaService.subscribeToAttendance(topicId, (attendanceData) => {
             console.log('Received attendance data:', attendanceData);
-            setRealTimeAttendance(prev => ({
-              ...prev,
-              [classItem.classAddress]: [
-                ...(prev[classItem.classAddress] || []),
-                attendanceData,
-              ],
-            }));
+            // Parse and validate the attendance data
+            if (attendanceData && attendanceData.lectureId && attendanceData.studentAddress) {
+              setRealTimeAttendance(prev => {
+                const newState = {
+                  ...prev,
+                  [classItem.classAddress]: [
+                    ...(prev[classItem.classAddress] || []),
+                    {
+                      ...attendanceData,
+                      timestamp: new Date().toISOString(),
+                    },
+                  ],
+                };
+                console.log('Updated real-time attendance state:', newState);
+                return newState;
+              });
+            } else {
+              console.warn('Received invalid attendance data:', attendanceData);
+            }
           });
           newSubscriptions[topicId] = true;
         } catch (error) {
