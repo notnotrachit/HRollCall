@@ -4,7 +4,7 @@ import ClassFactory from './contracts/ClassFactory.sol/ClassFactory.json';
 import ClassContract from './contracts/ClassContract.sol/ClassContract.json';
 import { HederaService } from './hederaService';
 
-const CONTRACT_ADDRESS = '0x2Cdc7251364d4C0e0e7D83037bE31d095A3c8497';
+const CONTRACT_ADDRESS = '0xc44f71964b613B22da8b14beE8E0dD1c8e423Ed1';
 const hederaService = new HederaService();
 
 export const createClass = async (name: string, symbol: string, provider: ethers.providers.Web3Provider) => {
